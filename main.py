@@ -1,8 +1,13 @@
-#!/usr/bin/python3add 
+#!/usr/bin/python3
 import subprocess
 import re
 
+print("Searching for services to stop...")
 result = subprocess.run(["sm", "--status"], capture_output=True, encoding="UTF-8")
-stdout = result.stdout
-services = map(lambda x: x, re.findall("\|\s+(?P<service>[A-Z_]+)\s+\|", stdout))
-result = subprocess.run(["sm", "--stop"] + list(services))
+services = map(lambda x: x, re.findall(r"\|\s+(?P<service>[A-Z_]+)\s+\|", result.stdout))
+
+listOfServices = list(services)
+if len(listOfServices) > 0:
+    subprocess.run(["sm", "--stop"] + listOfServices)
+else:
+    print("No services are running.")
